@@ -20,12 +20,12 @@ const Feed = ({ tweets: tweetsProp }: Props) => {
     setTweets(tweets);
 
     toast.success("Feed is updated", {
-      id: refreshToast
+      id: refreshToast,
     });
   };
 
   return (
-    <div className="col-span-7 lg:col-span-5 border-x">
+    <div className="col-span-7 lg:col-span-5 border-x max-h-screen overflow-scroll scrollbar-hide">
       <div className="flex item-center justify-between">
         <h1 className="p-5 pb-0 text-xl font-bold">Home</h1>
         <ArrowPathIcon
@@ -34,7 +34,7 @@ const Feed = ({ tweets: tweetsProp }: Props) => {
         />
       </div>
       <div>
-        <TweetBox />
+        <TweetBox setTweets={setTweets} />
       </div>
       {/* feed */}
 

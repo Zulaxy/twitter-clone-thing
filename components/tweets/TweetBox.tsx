@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, SetStateAction } from "react";
 
 import {
   CalendarIcon,
@@ -8,8 +8,15 @@ import {
   MagnifyingGlassCircleIcon,
 } from "@heroicons/react/24/outline";
 import { useSession } from "next-auth/react";
+import { TweetBody, Tweet } from "../../typings";
+import { fetchTweets } from "../../utils/fetchTweets";
+import toast from "react-hot-toast";
 
-const TweetBox = () => {
+interface Props {
+  setTweets: React.Dispatch<React.SetStateAction<Tweet[]>>;
+}
+
+const TweetBox = ({ setTweets }: Props) => {
   const [input, setInput] = useState<string>("");
   const [image, setImage] = useState<string>("");
 
@@ -23,10 +30,45 @@ const TweetBox = () => {
   ) => {
     e.preventDefault();
 
-    if (!imageInputRef.current?.value) return
+    if (!imageInputRef.current?.value) return;
 
     setImage(imageInputRef.current.value);
     imageInputRef.current.value = "";
+    setImageUrlBoxIsOpen(false);
+  };
+
+  const postTweet = async () => {
+    const tweetInfo: TweetBody = {
+      text: input,
+      username: session?.user?.name || "Unknown User",
+      profileImg:
+        session?.user?.image ||
+        "https://gmalchev.com/static/media/My-Image.acc5fd79dd3d1d631f56.png",
+      image: image,
+    };
+
+    const result = await fetch(`/api/addTweet`, {
+      body: JSON.stringify(tweetInfo),
+      method: "POST",
+    });
+
+    const json = await result.json();
+
+    const newTweets = await fetchTweets();
+    setTweets(newTweets);
+
+    toast("Tweet Posted", {
+      icon: "🚀",
+    });
+  };
+
+  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+
+    postTweet();
+
+    setInput("");
+    setImage("");
     setImageUrlBoxIsOpen(false);
   };
 
@@ -65,6 +107,7 @@ const TweetBox = () => {
             <button
               disabled={!input || !session}
               className="bg-twitter px-5 py-2 font-bold text-white rounded-full disabled:opacity-40"
+              onClick={handleSubmit}
             >
               Tweet
             </button>

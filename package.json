@@ -20,7 +20,8 @@
     "react-hot-toast": "^2.4.0",
     "react-timeago": "^7.1.0",
     "react-twitter-embed": "^4.0.4",
-    "sanity": "^2.33.2"
+    "sanity": "^2.33.2",
+    "tailwind-scrollbar-hide": "^1.1.7"
   },
   "devDependencies": {
     "@types/node": "18.11.3",
